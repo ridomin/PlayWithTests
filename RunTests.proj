@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TeamBuildRefPath>C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\PrivateAssemblies</TeamBuildRefPath>
     <TestToolsTaskToolPath>C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE</TestToolsTaskToolPath>
+    <TestResultsRoot>TestResults</TestResultsRoot>
   </PropertyGroup>
   
   <UsingTask TaskName="Microsoft.TeamFoundation.Build.Tasks.TestToolsTask"
@@ -15,13 +16,14 @@
     </CreateItem>
 
     <Message Text="Found @(LocalTestContainer)" />
+
+    <MakeDir Directories="$(TestResultsRoot)" Condition="!exists('$(TestResultsRoot)')" />
     
-    <TestToolsTask          
+    <!--http://msdn.microsoft.com/en-us/library/aa721750(v=vs.100).aspx-->
+    <TestToolsTask
           ToolPath="$(TestToolsTaskToolPath)"
-          PathToResultsFilesRoot="."
-          TestContainers="@(LocalTestContainer)"
-           />
-    
+          PathToResultsFilesRoot="$(MSBuildProjectDirectory)\$(TestResultsRoot)"
+          TestContainers="@(LocalTestContainer->'$(MSBuildProjectDirectory)\%(Identity)')" />
   </Target>
 
 <!--
